@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="stylesheets/ie.css">
   <![endif]-->
 
-  <script src="javascripts/modernizr.foundation.js"></script>
+  <script src="javascripts/lib/modernizr.foundation.js"></script>
 
   <!-- IE Fix for HTML5 Tags -->
   <!--[if lt IE 9]>
@@ -33,7 +33,23 @@
 <body>
 
   <!-- container -->
-  <div class="container">
+  <div id="productapp" class="container">
+
+    <div id="backupModal" class="reveal-modal">
+      <h2>Backup</h2>
+      <p>Copier/coller le contenu de la boite suivante dans un fichier texte.</p>
+      <textarea id="backupCSV" class="csv"></textarea>
+      <a class="close-reveal-modal">&#215;</a>
+    </div>
+
+    <div id="importModal" class="reveal-modal">
+      <h2>Importation</h2>
+      <p>Copier/coller le contenu d'un fichier texte à importer sur la page.</p>
+      <textarea id="importCSV" class="csv"></textarea>
+      <a href="#" id="submitCSV" class="right nice small radius red button">Importer</a>
+      <a class="close-reveal-modal">&#215;</a>
+    </div>
+
     <div class="row">
       <div class="twelve columns">
         <h2>Boucherie Stats</h2>
@@ -50,69 +66,66 @@
         <table style="margin-top:20px;width:100%">
           <thead>
             <tr>
-              <th>Fournisseurs</th>
-              <th>Pìeces</th>
-              <th>Prix</th>
-              <th>Action</th>
+              <th>Pièces</th>
+              <th>Fournisseur</th>
+              <th>Prix Moyen</th>
+              <th>Dernier Prix</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>Content</td>
-              <td>This is longer content</td>
-              <td>Content</td>
-              <td>Content</td>
-            </tr>
-            <tr>
-              <td>Content</td>
-              <td>This is longer content</td>
-              <td>Content</td>
-              <td>Content</td>
-            </tr>
-            <tr>
-              <td>Content</td>
-              <td>This is longer content</td>
-              <td>Content</td>
-              <td>Content</td>
-            </tr>
-            <tr>
-              <td>Content</td>
-              <td>This is longer content</td>
-              <td>Content</td>
-              <td>Content</td>
-            </tr>
+          <tbody id="product-list">
           </tbody>
         </table>
+        <a id="reveal-backup" href="#" class="right nice small radius red button">Backup</a>
       </div>
 
       <div class="four columns">
         <form class="nice">
           <fieldset>
-            <h5>Nouvelle entrée</h5>
-            <label for="fournisseurInput">Fournisseur</label>
-            <input type="text" name="fournisseurInput" class="input-text" id="fournisseurInput"/>
-            <label for="pieceInput">Pièce</label>
-            <input type="text" name="pieceInput" class="input-text" id="pieceInput"/>
+            <input type="hidden" id="fournisseurInput" style='width:254px'/>
+            <input type="hidden" id="pieceInput" style='width:254px'/>
             <label for="priceInput">Prix en euro</label>
-            <input type="text" name="priceInput" class="input-text" id="priceInput"/>
-            <input type="hidden" name="dateInput" value=""/>
-            <a href="#" class="right nice small radius blue button">Ajouter</a>
+            <input type="text" class="input-text" id="priceInput"/>
+            <a id="new-product" href="#" class="nice small radius blue button">Ajouter</a>
           </fieldset>
         </form>
+        <a id="reveal-import" href="#" class="right nice small radius red button">Import</a>
       </div>
   </div>
   <!-- container -->
 
+  <!-- Templates -->
 
-
+  <script type="text/template" id="piece-template">
+    <%
+    var rowspan = true;
+    _.each(fournisseurs, function(fournisseur) { 
+    %>
+      <tr>
+        <% if(rowspan) { %>
+        <td rowspan="<%= fournisseurs.length %>">
+          <%= piece %><br>
+          <a href="#" class="center nice small radius blue button">Afficher</a>
+        </td>
+        <% rowspan = false; } %>
+        <td><%= fournisseur.name %></td>
+        <td><%= fournisseur.price.medium %></td>
+        <td><%= fournisseur.price.latest %> <small>(<%= fournisseur.price.latest_date %>)</small></td>
+      </tr>
+    <% }); %>
+  </script>
 
   <!-- Included JS Files -->
-  <script src="javascripts/jquery.min.js"></script>
-  <script src="javascripts/foundation.js"></script>
-  <script src="javascripts/raphael-min.js"></script>
-  <script src="javascripts/morris.min.js"></script>
-  <script src="javascripts/sticky-2.8.js"></script>
-  <script src="javascripts/select2.js"></script>
+  <script src="javascripts/lib/jquery.min.js"></script>
+  <script src="javascripts/lib/jquery.csv.min.js"></script>
+  <script src="javascripts/lib/foundation.js"></script>
+  <script src="javascripts/lib/raphael-min.js"></script>
+  <script src="javascripts/lib/morris.min.js"></script>
+  <script src="javascripts/lib/select2.js"></script>
+  <script src="javascripts/lib/moment.min.js"></script>
+  <script src="javascripts/lib/underscore-min.js"></script>
+  <script src="javascripts/lib/backbone-min.js"></script>
+  <script src="javascripts/lib/backbone.localStorage.js"></script>
+  <script src="javascripts/mvc.js"></script>
   <script src="javascripts/app.js"></script>
 
 </body>

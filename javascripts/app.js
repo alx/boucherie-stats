@@ -112,4 +112,5 @@ jQuery(document).ready(function ($) {
   lineColors: ['#167f39','#044c29'],
   lineWidth: 2
 });
+
 });

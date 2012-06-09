@@ -6,9 +6,22 @@
 -----------------------------------------------------
 :: Shared Styles
 :: Page Name 1
-:: Page Name 2
 */
 
+.select2-container {
+  margin-bottom:10px;
+  width:254px;
+}
+
+.csv {
+  margin-left: 0px;
+  margin-right: 0px;
+  width: 520px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  height: 300px;
+  font-family:monospace;
+}
 
 /* -----------------------------------------
    Shared Styles
