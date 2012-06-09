@@ -58,10 +58,10 @@ $(function(){
       // Map list of price to compute medium price
       _.each(data, function(fournisseur){
         var total_medium = _.reduce(fournisseur.price.medium, function(memo, current){
-          return memo + current;
+          return memo + parseFloat(current);
         }, 0);
-
-        fournisseur.price.medium = (total_medium / fournisseur.price.medium.length);
+        console.log(fournisseur.name + ": " + fournisseur.price.medium.length + "- " + total_medium);
+        fournisseur.price.medium = parseFloat(total_medium / fournisseur.price.medium.length);
       });
 
       return data;
@@ -245,7 +245,10 @@ $(function(){
         return product;
       });
 
-      Products.reset();
+      while(Products.length != 0){
+        Products.each(function(model){model.destroy();});
+      }
+
       _.each(data, function(product){
         Products.create(product);
       });
