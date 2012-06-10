@@ -59,6 +59,9 @@
 
     <div class="row">
       <div id="plot"></div>
+        <a data-range="30" class="plot-time nice green small button">1 mois</a>
+        <a data-range="90" class="plot-time white small button">3 mois</a>
+        <a data-range="180" class="plot-time white small button">6 mois</a>
     </div>
 
     <div class="row">
@@ -75,7 +78,7 @@
           <tbody id="product-list">
           </tbody>
         </table>
-        <a id="reveal-backup" href="#" class="right nice small radius red button">Backup</a>
+        <a id="reveal-backup" href="#" class="right nice small red button">Backup</a>
       </div>
 
       <div class="four columns">
@@ -85,10 +88,10 @@
             <input type="hidden" id="pieceInput" style='width:254px'/>
             <label for="priceInput">Prix en euro</label>
             <input type="text" class="input-text" id="priceInput"/>
-            <a id="new-product" href="#" class="nice small radius blue button">Ajouter</a>
+            <a id="new-product" href="#" class="nice small blue button">Ajouter</a>
           </fieldset>
         </form>
-        <a id="reveal-import" href="#" class="right nice small radius red button">Import</a>
+        <a id="reveal-import" href="#" class="right nice small red button">Import</a>
       </div>
   </div>
   <!-- container -->
@@ -103,8 +106,8 @@
       <tr>
         <% if(rowspan) { %>
         <td rowspan="<%= fournisseurs.length %>">
-          <%= piece %><br>
-          <a href="#" class="center nice small radius blue button">Afficher</a>
+          <b><%= piece %></b><br>
+          <a href="#" class="display-plot center nice small blue button" rel="<%= piece %>">Afficher</a>
         </td>
         <% rowspan = false; } %>
         <td><%= fournisseur.name %></td>

@@ -147,6 +147,8 @@ $(function(){
       "click #reveal-import":  "revealImport",
       "click #reveal-backup":  "revealBackup",
       "click .close-reveal-modal": "closeReveal",
+      "click .plot-time": "changePlotTime",
+      "click .display-plot": "displayPlot",
     },
 
     // At initialization we bind to the relevant events on the `Products`
@@ -261,6 +263,40 @@ $(function(){
     closeReveal: function() {
       $(".reveal-modal").trigger('reveal:close');
     },
+
+    changePlotTime: function(event) {
+      var target = event.target;
+      $(".plot-time").removeClass("nice green").addClass("white");
+      $(target).removeClass("white").addClass("nice green");
+      var plotData = Products.plotInfo(piece, parseInt(target.dataset.range));
+      Morris.Line({
+        element: 'quarterly',
+        data: plotInfo.data,
+        xkey: 'date',
+        ykeys: plotInfo.ykeys,
+        labels: plotInfo.labels,
+        lineColors: plotInfo.colors,
+        lineWidth: 2
+      });
+    },
+
+    displayPlot: function(event) {
+      var piece = event.target.attributes.rel;
+      var plotInfo = Products.plotInfo(piece, 30);
+
+      $(".plot-time").removeClass("nice green").addClass("white");
+      $(".plot-time:first").removeClass("white").addClass("nice green");
+
+      Morris.Line({
+        element: 'quarterly',
+        data: plotInfo.data,
+        xkey: 'date',
+        ykeys: plotInfo.ykeys,
+        labels: plotInfo.labels,
+        lineColors: plotInfo.colors,
+        lineWidth: 2
+      });
+    }
 
   });
 
