@@ -60,7 +60,6 @@ $(function(){
         var total_medium = _.reduce(fournisseur.price.medium, function(memo, current){
           return memo + parseFloat(current);
         }, 0);
-        console.log(fournisseur.name + ": " + fournisseur.price.medium.length + "- " + total_medium);
         fournisseur.price.medium = parseFloat(total_medium / fournisseur.price.medium.length);
       });
 
@@ -103,6 +102,47 @@ $(function(){
       return data.join("\n");
     },
 
+    plotInfo: function(piece, range_days) {
+      var info = {data: [], ykeys: [], labels: []};
+
+      var start_date = moment().subtract('days', range_days);
+
+      // Select models by piece name and timestamp
+      var selectedModels = _.filter(this.models, function(product){
+        var product_date = moment(product.attributes.timestamp._d);
+        var in_range = product_date.diff(start_date, 'days') > 0;
+        return in_range && product.attributes.piece === piece
+      });
+
+      _.each(selectedModels, function(product){
+        var date = moment(product.attributes.timestamp._d).format("YYYY-MM-DD");
+        var fournisseur = product.attributes.fournisseur.toLowerCase().replace(/\s+/, '');
+        var price = parseFloat(product.attributes.price);
+
+        var existing_data = _.find(info['data'], function(data){
+          return data['date'] === date;
+        });
+
+        if(typeof(existing_data) === "undefined"){
+          var data = {date: date};
+          data[fournisseur] = price;
+          info['data'].push(data);
+        } else {
+          existing_data[fournisseur] = price;
+        }
+      });
+
+      info['ykeys'] = _.uniq(_.map(selectedModels, function(product){
+        return product.attributes['fournisseur'].toLowerCase().replace(/\s+/, '');
+      }));
+
+      info['labels'] = _.uniq(_.map(selectedModels, function(product){
+        return product.attributes['fournisseur']; 
+      }));
+
+      return info;
+    }
+
   });
 
   var Products = new ProductList;
@@ -120,8 +160,10 @@ $(function(){
     template: _.template($('#piece-template').html()),
 
     renderPiece: function(piece) {
-      var data = {piece: piece, fournisseurs: Products.pieceFournisseurs(piece)};
-      return this.template(data);
+      if(Products.length > 0){
+        var data = {piece: piece, fournisseurs: Products.pieceFournisseurs(piece)};
+        return this.template(data);
+      }
     },
 
     // Remove the item, destroy the model.
@@ -235,15 +277,17 @@ $(function(){
     },
 
     revealBackup: function() {
-      $("#backupCSV").val(Products.toCSV());
+      if(Products.length > 0)
+        $("#backupCSV").val(Products.toCSV());
       $("#backupModal").reveal();
     },
 
     importCSV: function() {
 
       var array = jQuery.csv2json()($("#importCSV").val());
-      var data = _.map(array, function(product){ 
-        product.timestamp = moment(parseInt(product.timestamp)); 
+      var data = _.map(array, function(product){
+        product.timestamp = moment(parseInt(product.timestamp) * 1000);
+        console.log(product.timestamp.format("YYYY-MM-DD"));
         return product;
       });
 
@@ -252,8 +296,10 @@ $(function(){
       }
 
       _.each(data, function(product){
+        console.log("create: " + product.price);
         Products.create(product);
       });
+      console.log(Products.length);
 
       $("#importModal").trigger('reveal:close');
 
@@ -266,34 +312,34 @@ $(function(){
 
     changePlotTime: function(event) {
       var target = event.target;
+      var piece = event.target.rel;
       $(".plot-time").removeClass("nice green").addClass("white");
       $(target).removeClass("white").addClass("nice green");
-      var plotData = Products.plotInfo(piece, parseInt(target.dataset.range));
+      var plotInfo = Products.plotInfo(piece, parseInt(target.dataset.range));
       Morris.Line({
-        element: 'quarterly',
+        element: 'plot',
         data: plotInfo.data,
         xkey: 'date',
         ykeys: plotInfo.ykeys,
         labels: plotInfo.labels,
-        lineColors: plotInfo.colors,
         lineWidth: 2
       });
     },
 
     displayPlot: function(event) {
-      var piece = event.target.attributes.rel;
+      var piece = event.target.rel;
       var plotInfo = Products.plotInfo(piece, 30);
 
       $(".plot-time").removeClass("nice green").addClass("white");
       $(".plot-time:first").removeClass("white").addClass("nice green");
+      $(".plot-time").attr('rel', piece);
 
       Morris.Line({
-        element: 'quarterly',
+        element: 'plot',
         data: plotInfo.data,
         xkey: 'date',
         ykeys: plotInfo.ykeys,
         labels: plotInfo.labels,
-        lineColors: plotInfo.colors,
         lineWidth: 2
       });
     }

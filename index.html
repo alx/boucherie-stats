@@ -111,8 +111,11 @@
         </td>
         <% rowspan = false; } %>
         <td><%= fournisseur.name %></td>
-        <td><%= fournisseur.price.medium %></td>
-        <td><%= fournisseur.price.latest %> <small>(<%= fournisseur.price.latest_date %>)</small></td>
+        <td><%= Math.round(fournisseur.price.medium*100)/100 %></td>
+        <td>
+          <%= Math.round(fournisseur.price.latest*100)/100 %> 
+          <small>(<%= fournisseur.price.latest_date %>)</small>
+        </td>
       </tr>
     <% }); %>
   </script>

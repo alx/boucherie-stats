@@ -6,7 +6,7 @@ class DataGenerator
 
   def run
     File.open('data_sample.csv', 'w') do |f|
-      f.write "fournisseur,piece,price,timestamp"
+      f.write "fournisseur,piece,price,timestamp\n"
     end
 
     data = [
@@ -14,7 +14,7 @@ class DataGenerator
       ['Maurice', 'Abats', 30],
       ['Maurice', 'Tournedos', 20],
       ['Samuel', 'Langue', 40],
-      ['Marrcel', 'Langue', 40],
+      ['Marcel', 'Langue', 40],
     ]
 
     start_date = DateTime.parse("01/01/2012").to_time.to_i
