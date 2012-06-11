@@ -91,7 +91,7 @@ $(function(){
           _.compact(_.map(product.attributes, function(val, key){
             if(key === "id") return null;
             if(key === "timestamp"){
-              return moment(val._d).valueOf();
+              return (moment(val._d).valueOf() / 1000);
             } else {
               return val;
             }
