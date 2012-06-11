@@ -114,9 +114,36 @@ $(function(){
         return in_range && product.attributes.piece === piece
       });
 
+      // Get the list of fournisseurs used in these models
+      var fournisseurList = _.map(selectedModels, function(product){
+        return product.attributes['fournisseur'].toLowerCase().replace(/\s+/, '');
+      });
+
+      // Hack to avoid getting fournisseur with 1 element, it won't display on plot
+      var fournisseurCount = {};
+      _.each(fournisseurList, function(fournisseur){
+        if(typeof(fournisseurCount[fournisseur]) === "undefined"){
+          fournisseurCount[fournisseur] = 0;
+        }
+        fournisseurCount[fournisseur] += 1;
+      });
+
+      // Clean fournisseurList and selectedModels if only 1 item
+      _.each(fournisseurCount, function(val, key){
+        if(val === 1){
+          fournisseurList = _.filter(fournisseurList, function(fournisseur){
+            return fournisseur != key;
+          });
+          selectedModels = _.filter(selectedModels, function(product){
+            return product.attributes.fournisseur.toLowerCase().replace(/\s+/, '') != key;
+          })
+        }
+      })
+
       _.each(selectedModels, function(product){
         var date = moment(product.attributes.timestamp._d).format("YYYY-MM-DD");
         var fournisseur = product.attributes.fournisseur.toLowerCase().replace(/\s+/, '');
+
         var price = parseFloat(product.attributes.price);
 
         var existing_data = _.find(info['data'], function(data){
@@ -132,9 +159,7 @@ $(function(){
         }
       });
 
-      info['ykeys'] = _.uniq(_.map(selectedModels, function(product){
-        return product.attributes['fournisseur'].toLowerCase().replace(/\s+/, '');
-      }));
+      info['ykeys'] = _.uniq(fournisseurList);
 
       info['labels'] = _.uniq(_.map(selectedModels, function(product){
         return product.attributes['fournisseur']; 
